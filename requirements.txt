@@ -1,0 +1,38 @@
+# Core dependencies
+openai>=1.12.0
+langchain>=0.1.0
+langchain-openai>=0.0.5
+chromadb>=0.4.22
+tiktoken>=0.5.2
+redis>=5.0.1
+
+# Web scraping
+beautifulsoup4>=4.12.0
+requests>=2.31.0
+selenium>=4.15.0
+lxml>=4.9.0
+
+# Text processing
+nltk>=3.8.1
+spacy>=3.7.0
+sentence-transformers>=2.3.0
+
+# Re-ranking
+torch>=2.1.0
+transformers>=4.36.0
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+tqdm>=4.66.0
+
+# Ollama (for local Llama 3)
+ollama>=0.1.0
+
+# Logging and monitoring
+loguru>=0.7.2
+
+# Data handling
+pandas>=2.1.0
+numpy>=1.24.0
