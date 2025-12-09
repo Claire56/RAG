@@ -95,7 +95,7 @@ This project teaches you:
 ## 🏗️ Project Structure
 
 ```
-InsuranceRAG/
+RAG/
 ├── README.md                    # This comprehensive guide
 ├── requirements.txt             # Python dependencies
 ├── .env.example                 # Environment variables template
@@ -166,7 +166,7 @@ InsuranceRAG/
 ### 1. Installation
 
 ```bash
-cd InsuranceRAG
+cd RAG
 pip install -r requirements.txt
 ```
 
