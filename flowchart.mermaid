@@ -1,57 +1,43 @@
 flowchart LR
   %% ===== Clients =====
-  U[Claims Adjusters\nWeb App / Slack / CRM] -->|HTTPS| WAF[WAF + DDoS Protection]
-  WAF --> APIGW[API Gateway\nAuth, Rate Limits, Request Validation]
+  U["Claims Adjusters<br/>Web App / Slack / CRM"] -->|HTTPS| WAF["WAF + DDoS Protection"]
+  WAF --> APIGW["API Gateway<br/>Auth, Rate Limits, Request Validation"]
 
   %% ===== Security / Identity =====
-  APIGW --> OIDC[SSO / OIDC Provider\n(RBAC / MFA)]
-  APIGW --> AUDIT[Audit Log\n(immutable)]
+  APIGW --> OIDC["SSO / OIDC Provider<br/>RBAC / MFA"]
+  APIGW --> AUDIT["Audit Log<br/>Immutable"]
 
   %% ===== Core Service on Kubernetes =====
-  APIGW --> INGRESS[Ingress / Service Mesh\nmTLS, Network Policies]
-  INGRESS --> API[FastAPI Backend\n/agent/answer]
+  APIGW --> INGRESS["Ingress / Service Mesh<br/>mTLS, Network Policies"]
+  INGRESS --> API["FastAPI Backend<br/>/agent/answer"]
 
-  API --> REDACT[PII Redaction + Policy Filter\nPrompt Firewall]
-  API --> ORCH[Agent Orchestrator\nLangGraph (step limits, tool allowlist)]
+  API --> REDACT["PII Redaction + Policy Filter<br/>Prompt Firewall"]
+  API --> ORCH["Agent Orchestrator<br/>LangGraph (step limits, tool allowlist)"]
 
   %% ===== Optimization =====
-  API --> CACHE[(Redis Cache)\nResponse + Semantic Cache\nIdempotency]
+  API --> CACHE["Redis Cache<br/>Response + Semantic Cache<br/>Idempotency"]
   ORCH --> CACHE
-  ORCH --> QUEUE[(Queue)\nAsync jobs: vision,\nlong tools, retries]
+  ORCH --> QUEUE["Queue<br/>Async jobs: vision, long tools, retries"]
 
   %% ===== Tooling / Integrations =====
-  ORCH --> CLAIMS[Claims Systems APIs\nPolicy, Claim, Payments]
-  ORCH --> VISION[Photo Ingestion + CV\nDamage signals]
-  ORCH --> TLOSS[Total Loss Model Tool\nScoring Service]
-  ORCH --> WEB[Web Search Tool\n(Tavily / Weather lookup)]
+  ORCH --> CLAIMS["Claims Systems APIs<br/>Policy, Claim, Payments"]
+  ORCH --> VISION["Photo Ingestion + CV<br/>Damage signals"]
+  ORCH --> TLOSS["Total Loss Model Tool<br/>Scoring Service"]
+  ORCH --> WEB["Web Search Tool<br/>Tavily / Weather lookup"]
 
   %% ===== RAG =====
-  ORCH --> RAG[RAG Service\nChunking, metadata filters]
-  RAG --> VDB[(Vector DB)\nPinecone]
-  RAG --> DOCS[(Document Store)\nS3/Blob + Postgres metadata]
+  ORCH --> RAG["RAG Service<br/>Chunking, metadata filters"]
+  RAG --> VDB["Vector DB<br/>Pinecone"]
+  RAG --> DOCS["Document Store<br/>S3/Blob + Postgres metadata"]
 
   %% ===== LLM Gateway =====
-  ORCH --> LLMGW[LLM Gateway\nRouting, retries, fallbacks,\nprompt/version mgmt]
-  LLMGW --> OPENAI[OpenAI / External LLM]
-  LLMGW --> OSS[Self-hosted OSS LLM\n(Qwen 2.5 on GPU)]
+  ORCH --> LLMGW["LLM Gateway<br/>Routing, retries, fallbacks,<br/>prompt & version mgmt"]
+  LLMGW --> OPENAI["OpenAI / External LLM"]
+  LLMGW --> OSS["Self-hosted OSS LLM<br/>Qwen 2.5 on GPU"]
 
   %% ===== Observability =====
-  API --> OBS[Tracing + Metrics + Logs\nLangSmith + OpenTelemetry]
+  API --> OBS["Tracing + Metrics + Logs<br/>LangSmith + OpenTelemetry"]
   LLMGW --> OBS
   ORCH --> OBS
 
-  %% ===== Secrets / Config =====
-  API --> SECRETS[Secrets Manager\nKMS-encrypted, rotation]
-  LLMGW --> SECRETS
-
-  %% ===== Scaling =====
-  subgraph K8S[Kubernetes Cluster]
-    API
-    ORCH
-    RAG
-    LLMGW
-    VISION
-  end
-
-  K8S --> HPA[Autoscaling\nHPA/KEDA + GPU autoscale]
-  CLAIMS -->|Private Network| INGRESS
+  %% ===== Secrets / Config
